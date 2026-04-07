@@ -4,300 +4,265 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Drekee Search</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg-dark: #09090b;
+    --bg-glow: #1a2235;
+    --glass-bg: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --glass-hover: rgba(255, 255, 255, 0.06);
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --accent: #3b82f6;
+  }
+
+  *, *::before, *::after { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+  }
 
   body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #1a1a1a;
-    color: #d0d0d0;
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at 50% -20%, var(--bg-glow) 0%, var(--bg-dark) 70%);
+    background-color: var(--bg-dark);
+    color: var(--text-main);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* ── SETTINGS ICON TOP RIGHT ── */
   .topbar {
     display: flex;
     justify-content: flex-end;
-    padding: 18px 28px;
+    padding: 24px 32px;
   }
-  .topbar .icon-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: #888;
-    padding: 6px;
-    border-radius: 8px;
-    transition: color .15s;
-    display: flex; align-items: center;
-  }
-  .topbar .icon-btn:hover { color: #ccc; }
 
-  /* ── HERO ── */
+  .icon-btn {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 10px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    display: flex; 
+    align-items: center;
+    justify-content: center;
+  }
+
+  .icon-btn:hover { 
+    color: var(--text-main); 
+    background: var(--glass-hover);
+    transform: scale(1.05);
+  }
+
   .hero {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0 20px 60px;
-    gap: 0;
+    padding: 0 20px 10vh;
   }
 
-  /* Logo */
   .logo-wrap {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 36px;
+    gap: 18px;
+    margin-bottom: 48px;
+    user-select: none;
+    animation: fadeDown 0.8s ease-out;
   }
 
-  /* SVG Lion Shield icon in Drekee blue */
   .logo-icon {
-    width: 62px;
-    height: 62px;
+    width: 64px;
+    height: 64px;
+    filter: drop-shadow(0 0 24px rgba(59, 130, 246, 0.4));
   }
 
   .logo-text {
-    font-size: 56px;
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: -1px;
-    line-height: 1;
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: -2px;
+    background: linear-gradient(180deg, #ffffff 0%, #a1a1aa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
-  /* ── SEARCH BAR ── */
   .search-wrap {
     width: 100%;
-    max-width: 680px;
-    background: #2b2b2b;
-    border: 1px solid #3a3a3a;
-    border-radius: 16px;
+    max-width: 740px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border);
+    border-radius: 32px;
     display: flex;
     align-items: center;
-    padding: 14px 14px 14px 20px;
-    gap: 12px;
-    margin-bottom: 48px;
+    padding: 10px 10px 10px 24px;
+    gap: 16px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    animation: fadeUp 0.8s ease-out 0.2s both;
   }
-  .search-wrap .plus-btn {
+  
+  .search-wrap:focus-within {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 32px 64px rgba(0, 0, 0, 0.5), 0 0 0 4px rgba(59, 130, 246, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .circle-btn {
     background: transparent;
     border: none;
     cursor: pointer;
-    color: #777;
-    display: flex; align-items: center;
+    color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
-    font-size: 20px;
-    transition: color .15s;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
   }
-  .search-wrap .plus-btn:hover { color: #aaa; }
+
+  .circle-btn:hover { 
+    color: var(--text-main);
+    background: var(--glass-hover);
+  }
+
   .search-wrap textarea {
     flex: 1;
     background: transparent;
     border: none;
     outline: none;
-    color: #aaa;
-    font-size: 15px;
+    color: var(--text-main);
+    font-size: 16px;
+    font-weight: 500;
     resize: none;
-    line-height: 1.5;
-    min-height: 44px;
+    line-height: 24px;
+    height: 24px;
     font-family: inherit;
+    overflow: hidden;
   }
-  .search-wrap textarea::placeholder { color: #666; }
-  .search-wrap .mic-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: #777;
-    display: flex; align-items: center;
-    flex-shrink: 0;
-    padding: 4px;
-    transition: color .15s;
+  
+  .search-wrap textarea::placeholder { 
+    color: var(--text-muted); 
+    font-weight: 400;
   }
-  .search-wrap .mic-btn:hover { color: #aaa; }
-  .search-wrap .btn-ask {
+  
+  .btn-ask {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: #2b2b2b;
-    border: 1px solid #444;
-    border-radius: 10px;
-    color: #d0d0d0;
-    font-size: 14px;
+    gap: 10px;
+    background: var(--text-main);
+    color: var(--bg-dark);
+    border: none;
+    border-radius: 24px;
+    font-size: 15px;
     font-weight: 600;
-    padding: 10px 18px;
+    padding: 12px 24px;
     cursor: pointer;
     flex-shrink: 0;
-    transition: background .15s, border-color .15s;
-    white-space: nowrap;
+    transition: all 0.3s ease;
   }
-  .search-wrap .btn-ask:hover { background: #333; border-color: #555; }
-  .btn-ask .ask-icon {
-    width: 18px; height: 18px;
+
+  .btn-ask:hover { 
+    background: #e2e8f0; 
+    transform: scale(1.03);
+    box-shadow: 0 8px 16px rgba(255,255,255,0.1);
+  }
+
+  .ask-icon {
+    width: 20px; height: 20px;
     border-radius: 50%;
-    background: #2563eb;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .btn-ask .ask-icon svg { display: block; }
-
-  /* ── PROMO CARD ── */
-  .promo-card {
-    width: 100%;
-    max-width: 680px;
-    background: #222222;
-    border: 1px solid #2e2e2e;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    padding: 18px 20px;
-    gap: 16px;
-  }
-  .promo-card .promo-icon {
-    width: 40px; height: 40px;
-    flex-shrink: 0;
+    background: var(--accent);
     display: flex; align-items: center; justify-content: center;
   }
-  .promo-card .promo-text { flex: 1; }
-  .promo-card .promo-title {
-    font-size: 14px;
-    font-weight: 700;
-    color: #e0e0e0;
-    margin-bottom: 3px;
-  }
-  .promo-card .promo-desc {
-    font-size: 13px;
-    color: #888;
-  }
-  .promo-card .btn-download {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: #2563eb;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: background .15s;
-  }
-  .promo-card .btn-download:hover { background: #1d4ed8; }
 
-  /* ── FOOTER ── */
-  .footer {
-    border-top: 1px solid #222;
-    padding: 16px 28px;
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    flex-wrap: wrap;
-    font-size: 12px;
-    color: #555;
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  .footer a { color: #555; text-decoration: none; transition: color .15s; }
-  .footer a:hover { color: #aaa; }
-  .footer span { color: #444; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .logo-text { font-size: 40px; }
+    .search-wrap { 
+      flex-wrap: wrap; 
+      padding: 16px; 
+      border-radius: 24px;
+    }
+    .search-wrap textarea { 
+      min-width: 100%; 
+      order: -1; 
+      margin-bottom: 12px; 
+      height: 48px;
+    }
+    .btn-ask { width: 100%; justify-content: center; }
+  }
 </style>
 </head>
 <body>
 
-<!-- TOP RIGHT SETTINGS -->
-<div class="topbar">
+<nav class="topbar">
   <button class="icon-btn" title="Configurações">
-    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="3"/>
       <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
     </svg>
   </button>
-</div>
+</nav>
 
-<!-- HERO -->
 <main class="hero">
 
-  <!-- Logo -->
   <div class="logo-wrap">
-    <!-- Shield / Lion icon in Drekee blue -->
     <svg class="logo-icon" viewBox="0 0 80 88" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- shield body -->
-      <path d="M40 4 L74 18 L74 46 C74 64 58 78 40 84 C22 78 6 64 6 46 L6 18 Z" fill="#2563eb"/>
       <path d="M40 4 L74 18 L74 46 C74 64 58 78 40 84 C22 78 6 64 6 46 L6 18 Z" fill="url(#shieldGrad)"/>
       <defs>
         <linearGradient id="shieldGrad" x1="40" y1="4" x2="40" y2="84" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stop-color="#3b82f6"/>
-          <stop offset="100%" stop-color="#1d4ed8"/>
+          <stop offset="0%" stop-color="#60a5fa"/>
+          <stop offset="100%" stop-color="#2563eb"/>
         </linearGradient>
       </defs>
-      <!-- inner shield highlight -->
-      <path d="M40 12 L68 24 L68 46 C68 61 54 73 40 78 C26 73 12 61 12 46 L12 24 Z" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
-      <!-- stylized D letter -->
-      <text x="40" y="58" text-anchor="middle" font-size="36" font-weight="900" font-family="Arial" fill="white" letter-spacing="-1">D</text>
+      <path d="M40 12 L68 24 L68 46 C68 61 54 73 40 78 C26 73 12 61 12 46 L12 24 Z" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+      <text x="40" y="58" text-anchor="middle" font-size="38" font-weight="900" font-family="'Inter', sans-serif" fill="white" letter-spacing="-1">D</text>
     </svg>
-    <div class="logo-text">Drekee Search</div>
+    <h1 class="logo-text">Drekee Search</h1>
   </div>
 
-  <!-- Search bar -->
   <div class="search-wrap">
-    <button class="plus-btn" title="Adicionar">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+    <button class="circle-btn" title="Adicionar arquivo">
+      <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
     </button>
-    <textarea placeholder="Pergunte o que quiser, encontre o que está&#10;procurando..." rows="2"></textarea>
-    <button class="mic-btn" title="Microfone">
-      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    
+    <textarea placeholder="Pergunte o que quiser..." rows="1"></textarea>
+    
+    <button class="circle-btn" title="Pesquisa por voz">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
         <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
         <line x1="12" y1="19" x2="12" y2="23"/>
         <line x1="8" y1="23" x2="16" y2="23"/>
       </svg>
     </button>
+    
     <button class="btn-ask">
       <span class="ask-icon">
-        <svg width="12" height="12" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        <svg width="14" height="14" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
       </span>
       Perguntar
     </button>
   </div>
 
-  <!-- Promo card -->
-  <div class="promo-card">
-    <div class="promo-icon">
-      <!-- small shield icon -->
-      <svg viewBox="0 0 40 44" width="40" height="44" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20 2 L37 9 L37 23 C37 32 29 39 20 42 C11 39 3 32 3 23 L3 9 Z" fill="#2563eb"/>
-        <path d="M20 2 L37 9 L37 23 C37 32 29 39 20 42 C11 39 3 32 3 23 L3 9 Z" fill="url(#sg2)"/>
-        <defs>
-          <linearGradient id="sg2" x1="20" y1="2" x2="20" y2="42" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stop-color="#3b82f6"/>
-            <stop offset="100%" stop-color="#1d4ed8"/>
-          </linearGradient>
-        </defs>
-        <text x="20" y="28" text-anchor="middle" font-size="18" font-weight="900" font-family="Arial" fill="white">D</text>
-      </svg>
-    </div>
-    <div class="promo-text">
-      <div class="promo-title">Drekee Search</div>
-      <div class="promo-desc">Gosta da busca privada? Experimente o navegador que coloca você em primeiro lugar.</div>
-    </div>
-    <button class="btn-download">
-      Baixar
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    </button>
-  </div>
-
 </main>
-
-<!-- FOOTER -->
-<footer class="footer">
-  <span>© Drekee Software</span>
-  <a href="#">Anuncie</a>
-  <a href="#">API</a>
-  <a href="#">Notícias</a>
-  <a href="#">Perguntas frequentes</a>
-  <a href="#">Política de Privacidade</a>
-  <a href="#">Comunicar um problema de segurança</a>
-</footer>
 
 </body>
 </html>
