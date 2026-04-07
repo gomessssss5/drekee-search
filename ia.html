@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Drekee – Inteligência Editorial</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #0d0d0d;
+    color: #e0e0e0;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: 228px;
+    min-width: 228px;
+    background: #111111;
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 16px 0;
+    border-right: 1px solid #1e1e1e;
+  }
+
+  .sidebar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 22px 20px 28px 20px;
+  }
+  .sidebar-logo .logo-icon {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3a7bd5, #6ec1e4);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #fff;
+    flex-shrink: 0;
+  }
+  .sidebar-logo .logo-text { line-height: 1.2; }
+  .sidebar-logo .logo-text .name { font-size: 15px; font-weight: 700; color: #fff; }
+  .sidebar-logo .logo-text .sub  { font-size: 8px; letter-spacing: 2px; color: #888; text-transform: uppercase; }
+
+  .sidebar-nav { flex: 1; display: flex; flex-direction: column; gap: 2px; padding: 0 10px; }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 11px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #c0c0c0;
+    transition: background .15s;
+    user-select: none;
+  }
+  .nav-item:hover { background: #1c1c1c; }
+  .nav-item.active { background: #1c1c1c; color: #fff; }
+  .nav-item svg { flex-shrink: 0; opacity: .75; }
+
+  .sidebar-bottom { padding: 12px 10px 0; }
+  .btn-new-search {
+    display: flex; align-items: center; gap: 8px; justify-content: center;
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 22px;
+    padding: 11px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    transition: background .15s;
+  }
+  .btn-new-search:hover { background: #1d4ed8; }
+
+  .nav-item-help {
+    display: flex; align-items: center; gap: 14px;
+    padding: 10px 12px;
+    color: #888;
+    font-size: 14px;
+    cursor: pointer;
+    margin-top: 10px;
+    border-radius: 8px;
+  }
+  .nav-item-help:hover { color: #ccc; background: #1c1c1c; }
+
+  /* ── MAIN ── */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* top bar */
+  .topbar {
+    display: flex;
+    align-items: center;
+    padding: 0 28px;
+    height: 54px;
+    border-bottom: 1px solid #1e1e1e;
+    background: #111111;
+    flex-shrink: 0;
+  }
+  .topbar-logo {
+    font-size: 20px; font-weight: 800;
+    color: #fff;
+    margin-right: 28px;
+    letter-spacing: -.5px;
+  }
+  .topbar-nav { display: flex; gap: 4px; flex: 1; }
+  .topbar-nav a {
+    font-size: 14px; color: #aaa;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: color .15s;
+  }
+  .topbar-nav a:hover { color: #fff; }
+  .topbar-nav a.active {
+    color: #fff;
+    border-bottom: 2px solid #2563eb;
+    border-radius: 0;
+    padding-bottom: 4px;
+  }
+  .topbar-icons {
+    display: flex; align-items: center; gap: 10px;
+  }
+  .topbar-icons .icon-btn {
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; border: none; cursor: pointer;
+    color: #aaa; transition: background .15s;
+  }
+  .topbar-icons .icon-btn:hover { background: #1e1e1e; color: #fff; }
+  .topbar-icons .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #e44;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #fff;
+    cursor: pointer;
+  }
+
+  /* hero */
+  .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px 80px;
+  }
+
+  .hero-logo {
+    font-size: 90px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -4px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .hero-tagline {
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: #555;
+    text-transform: uppercase;
+    margin-bottom: 38px;
+  }
+
+  /* search bar */
+  .search-wrap {
+    width: 100%;
+    max-width: 636px;
+    background: #181818;
+    border: 1px solid #272727;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    padding: 10px 10px 10px 18px;
+    gap: 10px;
+    margin-bottom: 26px;
+  }
+  .search-wrap svg.search-icon { color: #555; flex-shrink: 0; }
+  .search-wrap input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #888;
+    font-size: 15px;
+  }
+  .search-wrap input::placeholder { color: #555; }
+  .search-wrap .icon-btn-s {
+    background: transparent; border: none; cursor: pointer;
+    color: #666; display: flex; align-items: center;
+    padding: 4px;
+  }
+  .search-wrap .icon-btn-s:hover { color: #aaa; }
+  .search-wrap .btn-search {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 9px 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .search-wrap .btn-search:hover { background: #1d4ed8; }
+
+  /* feature cards */
+  .cards {
+    display: flex;
+    gap: 14px;
+    max-width: 636px;
+    width: 100%;
+  }
+  .card {
+    flex: 1;
+    background: #151515;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 18px 16px 16px;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+  }
+  .card:hover { background: #1c1c1c; border-color: #333; }
+  .card .card-icon { margin-bottom: 12px; color: #aaa; }
+  .card .card-title { font-size: 13px; font-weight: 600; color: #e0e0e0; margin-bottom: 4px; }
+  .card .card-desc  { font-size: 11px; color: #666; }
+
+  /* footer */
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 28px;
+    border-top: 1px solid #1a1a1a;
+    font-size: 11px;
+    color: #444;
+    flex-shrink: 0;
+  }
+  .footer .footer-left { display: flex; gap: 16px; }
+  .footer .footer-right { display: flex; gap: 16px; }
+  .footer a { color: #444; text-decoration: none; }
+  .footer a:hover { color: #888; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">D</div>
+    <div class="logo-text">
+      <div class="name">Drekee AI</div>
+      <div class="sub">Curadora Digital</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-item active">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Pesquisar
+    </div>
+    <div class="nav-item">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="9" height="9" rx="1"/><rect x="13" y="3" width="9" height="9" rx="1"/><rect x="2" y="14" width="9" height="9" rx="1"/><rect x="13" y="14" width="9" height="9" rx="1"/></svg>
+      Biblioteca
+    </div>
+    <div class="nav-item">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+      Histórico
+    </div>
+    <div class="nav-item">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      Configurações
+    </div>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <button class="btn-new-search">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+      Nova Pesquisa
+    </button>
+    <div class="nav-item-help">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+      Ajuda
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-logo">Drekee</div>
+    <nav class="topbar-nav">
+      <a href="#" class="active">Imagens</a>
+      <a href="#">Notícias</a>
+      <a href="#">Vídeos</a>
+    </nav>
+    <div class="topbar-icons">
+      <button class="icon-btn" title="Apps">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="4" height="4" rx=".5"/><rect x="10" y="3" width="4" height="4" rx=".5"/><rect x="17" y="3" width="4" height="4" rx=".5"/><rect x="3" y="10" width="4" height="4" rx=".5"/><rect x="10" y="10" width="4" height="4" rx=".5"/><rect x="17" y="10" width="4" height="4" rx=".5"/><rect x="3" y="17" width="4" height="4" rx=".5"/><rect x="10" y="17" width="4" height="4" rx=".5"/><rect x="17" y="17" width="4" height="4" rx=".5"/></svg>
+      </button>
+      <button class="icon-btn" title="Configurações">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      </button>
+      <div class="avatar">U</div>
+    </div>
+  </header>
+
+  <main class="content">
+    <div class="hero-logo">Drekee</div>
+    <div class="hero-tagline">Inteligência &nbsp; Editorial</div>
+
+    <div class="search-wrap">
+      <svg class="search-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" placeholder="Pesquise com inteligência..." />
+      <button class="icon-btn-s" title="Áudio">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </button>
+      <button class="icon-btn-s" title="Câmera">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </button>
+      <button class="btn-search">Buscar</button>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        </div>
+        <div class="card-title">Tendências</div>
+        <div class="card-desc">O que o mundo lê agora.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div class="card-title">Curadoria</div>
+        <div class="card-desc">Seleção feita por IA.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="card-title">Resumos</div>
+        <div class="card-desc">Sintetize conteúdos.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+        </div>
+        <div class="card-title">Tradutor</div>
+        <div class="card-desc">Compreensão global.</div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-left">
+      <a href="#">Início</a>
+      <a href="#">Drekee</a>
+      <a href="#">Biblioteca</a>
+      <a href="#">Pesquisa</a>
+    </div>
+    <div class="footer-right">
+      <a href="#">Privacidade</a>
+      <a href="#">Termos</a>
+      <a href="#">Configurações</a>
+      <span>© 2024 Drekee</span>
+    </div>
+  </footer>
+</div>
+
+</body>
+</html>
